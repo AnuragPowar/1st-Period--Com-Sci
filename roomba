@@ -35,24 +35,35 @@ public class Driver implements Directions {
 		World.readWorld(wrldName);
     World.setVisible(true);
  World.setSize(15, 15);
-    World.setDelay(35);
+    World.setDelay(6);
        Robot r = new Robot(7,6,East,100);
- r.move();
-    r.turnLeft();
-    r.move();
-
-	/** This section will have all the logic that takes the Robot to every location 
-	 * and cleans up all piles of beepers.  Think about ways you can break this
-	 * large, complex task into smaller, easier to solve problems.
-	 */
-
-		// the line below causes a null pointer exception
-		// what is that and why are we getting it?
-		roomba.move();
-
-
   
 
+	while(r.frontIsClear())
+{
+ while(r.nextToABeeper())
+{
+
+	r.pickBeeper();
+}
+r.move();
+}
+if(r.facingEast()==true)
+{
+	r.turnLeft();
+	r.move();
+	r.turnLeft();
+}
+else if(r.facingEast()==true)
+{
+	r.turnLeft();
+	r.turnLeft();
+	r.turnLeft();
+	r.move();
+	r.turnLeft();
+	r.turnLeft();
+	r.turnLeft();
+}
 
 
 
@@ -63,14 +74,5 @@ public class Driver implements Directions {
 	 */
 
     System.out.println("The biggest pile was ");
-
-
-
-
-
-
-
-
-  }
-
-}
+	}
+	}
