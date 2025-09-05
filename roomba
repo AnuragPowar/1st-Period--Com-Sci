@@ -38,7 +38,7 @@ public class Driver implements Directions {
     World.setDelay(6);
        Robot r = new Robot(7,6,East,100);
   
-
+for(int i = 1; i <=5; i++)
 	while(r.frontIsClear())
 {
  while(r.nextToABeeper())
@@ -54,7 +54,7 @@ if(r.facingEast()==true)
 	r.move();
 	r.turnLeft();
 }
-else if(r.facingEast()==true)
+else if(r.facingWest()==true)
 {
 	r.turnLeft();
 	r.turnLeft();
@@ -65,14 +65,3 @@ else if(r.facingEast()==true)
 	r.turnLeft();
 }
 
-
-
-
-  	/** This method displays the results of cleaning the room.  All of the info
-	 * in the pdf that describes the problem need to be displayed.  You can present
-	 * this info in the console (boring) or you can present using JOptionPane (cool!)
-	 */
-
-    System.out.println("The biggest pile was ");
-	}
-	}
