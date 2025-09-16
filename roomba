@@ -1,80 +1,116 @@
-import java.util.Scanner; //may be necessary for input
-
-import javax.swing.JOptionPane; //may be necessary for input
-
+import java.util.Scanner;
+import javax.swing.JOptionPane;
 import kareltherobot.*;
 
 public class Driver implements Directions {
-	// declared here so it is visible in all the methods!!
-	// It will be assigned a value in the getInfo method
-	private static Robot roomba;
+private static Robot roomba;
 
-	// You will add very many variables!!
+public static void main(String[] args) {
+// --- SETUP ---
+String wrldName = "basicRoom.wld";
+World.readWorld(wrldName);
+World.setVisible(true);
+World.setSize(15, 15);
+World.setDelay(7);
 
-	public static void main(String[] args) {
-		// LEAVE THIS ALONE!!!!!!
-		Driver d = new Driver();
+Robot r = new Robot(7, 6, East, 100);
 
-		/**
-		 * This section of code gets info from the user in the following order: 1. Ask
-		 * the user
-		 * which world file they wish to process. Right now, that world file name is
-		 * hardcoded in. 2. Ask the user for the starting location and direction of the
-		 * Robot. A new Robot should be constructed and assigned to the global
-		 * (instance) variable named roomba that is declared on line 10.
-		 * 
-		 * An inelegant way to interact with the user is via the console, using
-		 * System.out.println and a Scanner that scans System.in (input from the
-		 * console). A more elegant way to get user input might include using a
-		 * JOptionPane.
-		 */
+// --- STATS VARIABLES ---
+int area = 0;
+int numPiles = 0;
+int totalBeepers = 0;
+int biggestPile = 0;
+int biggestPileStreet = 0;
+int biggestPileAvenue = 0;
 
-		String wrldName = "basicRoom.wld";
+boolean done = false;
 
-		World.readWorld(wrldName);
-		World.setVisible(true);
-		World.setSize(15, 15);
-		World.setDelay(7);
-		Robot r = new Robot(7, 6, East, 100);
+// --- CLEANING LOOP (zig-zag pattern) ---
+while (!done) {
+// move across current row
+while (r.frontIsClear()) {
+// count this square
+area++;
 
-		for (int i = 1; i <= 5; i++)
-		{
-			while (r.frontIsClear()) {
-				while (r.nextToABeeper()) {
+// check for beepers
+int pileSize = 0;
+while (r.nextToABeeper()) {
+r.pickBeeper();
+pileSize++;
+}
 
-					r.pickBeeper();
-				}
-				r.move();
-			}
-			if (r.facingEast() == true) {
-				r.turnLeft();
-				r.move();
-				r.turnLeft();
-			} 
-			else if (r.facingWest() == true) {
-				r.turnLeft();
-				r.turnLeft();
-				r.turnLeft();
-				r.move();
-				r.turnLeft();
-				r.turnLeft();
-				r.turnLeft();
-			}
-		}
+if (pileSize > 0) {
+numPiles++;
+totalBeepers += pileSize;
 
-		/**
-		 * This method displays the results of cleaning the room. All of the info
-		 * in the pdf that describes the problem need to be displayed. You can present
-		 * this info in the console (boring) or you can present using JOptionPane
-		 * (cool!)
-		 */
+if (pileSize > biggestPile) {
+biggestPile = pileSize;
+biggestPileStreet = r.street();
+biggestPileAvenue = r.avenue();
+}
+}
 
-		System.out.println("The Area of the room is ");
-		System.out.println("The Number of piles are  ");
-		System.out.println("The Total number of beepers was  ");
-		System.out.println("The biggest pile was ");
-		System.out.println("The location of the largest pile was ");
-		System.out.println("The Average pile size was ");
-		System.out.println("The Percent dirty was  ");
-	}
+// move forward
+if (r.frontIsClear()) {
+r.move();
+}
+}
+
+// --- last square in row ---
+area++;
+int pileSize = 0;
+while (r.nextToABeeper()) {
+r.pickBeeper();
+pileSize++;
+}
+if (pileSize > 0) {
+numPiles++;
+totalBeepers += pileSize;
+if (pileSize > biggestPile) {
+biggestPile = pileSize;
+biggestPileStreet = r.street();
+biggestPileAvenue = r.avenue();
+}
+}
+
+// --- check if there is another row ---
+if (r.facingEast()) {
+r.turnLeft();
+if (r.frontIsClear()) {
+r.move();
+r.turnLeft();
+} else {
+done = true; // no more rows
+}
+} else if (r.facingWest()) {
+turnRight(r);
+if (r.frontIsClear()) {
+r.move();
+turnRight(r);
+} else {
+done = true; // no more rows
+}
+}
+}
+
+// --- FINAL STATS ---
+double avgPile = (numPiles > 0) ? (double) totalBeepers / numPiles : 0;
+double percentDirty = (area > 0) ? (100.0 * numPiles / area) : 0;
+
+System.out.println("The Area of the room is " + area);
+System.out.println("The Number of piles are " + numPiles);
+System.out.println("The Total number of beepers was " + totalBeepers);
+System.out.println("The biggest pile was " + biggestPile);
+System.out.println("The location of the largest pile was street "
++ biggestPileStreet + " avenue " + biggestPileAvenue);
+System.out.println("The Average pile size was " + avgPile);
+System.out.println("The Percent dirty was " + percentDirty + "%");
+}
+
+// --- HELPER METHOD ---
+public static void turnRight(Robot r) {
+r.turnLeft();
+r.turnLeft();
+r.turnLeft();
+}
 }
