@@ -7,13 +7,13 @@ private static Robot roomba;
 
 public static void main(String[] args) {
 // --- SETUP ---
-String wrldName = "basicRoom.wld";
+String wrldName = "finalTestWorld2024.wld";
 World.readWorld(wrldName);
 World.setVisible(true);
-World.setSize(15, 15);
-World.setDelay(7);
+World.setSize(200, 100);
+World.setDelay(0);
 
-Robot r = new Robot(7, 6, East, 100);
+Robot r = new Robot(26, 101, East, 100);
 
 // --- STATS VARIABLES ---
 int area = 0;
